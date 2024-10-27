@@ -81,20 +81,20 @@ void setup() {
   // Initialize the sensor with a specific gyroscope scale
   mpu.begin(MPU_MODE_250); // Options: MPU_MODE_250, MPU_MODE_500, MPU_MODE_1000, MPU_MODE_2000
 
-  // Adjust the correction factor of the complementary filter
-  mpu.setComplementaryFactor(0.95); // Value between 0.0 and 1.0
+  // Optional, adjust the correction factor of the complementary filter
+  mpu.setComplementaryFactor(0.95); // Value between 0.0 and 1.0, standard is 0.98
 
-  // Adjust the parameters of the Kalman filter
+  // Optional, adjust the parameters of the Kalman filter
   mpu.setKalmanQangle(0.001);
   mpu.setKalmanQbias(0.003);
   mpu.setKalmanRmeasure(0.03);
 
-  // Display the current settings
+  // Optional, display the current settings
   mpu.printSettings();
 }
 
 void loop() {
-  // Get the angles
+  // Get the angles, standard filter is COMPLEMENTARY
   float angleX = mpu.getAngle('X');
   float angleY = mpu.getAngle('Y');
   float angleZ = mpu.getAngle('Z', KALMAN);
@@ -196,20 +196,20 @@ void setup() {
   // Inicializa o sensor com uma escala específica do giroscópio
   mpu.begin(MPU_MODE_250); // Opções: MPU_MODE_250, MPU_MODE_500, MPU_MODE_1000, MPU_MODE_2000
 
-  // Ajustar o fator de correção do filtro complementar
-  mpu.setComplementaryFactor(0.95); // Valor entre 0.0 e 1.0
+  //Opicional, ajustar o fator de correção do filtro complementar
+  mpu.setComplementaryFactor(0.98); // Valor entre 0.0 e 1.0, o padrão é de 0.98
 
-  // Ajustar os parâmetros do filtro de Kalman
+  //Opicional, ajustar os parâmetros do filtro de Kalman
   mpu.setKalmanQangle(0.001);
   mpu.setKalmanQbias(0.003);
   mpu.setKalmanRmeasure(0.03);
 
-  // Exibir as configurações atuais
+  //Opicional, exibir as configurações atuais
   mpu.printSettings();
 }
 
 void loop() {
-  // Obter os ângulos
+  // Obter os ângulos, o filtro padrão é o complementar
   float angleX = mpu.getAngle('X', KALMAN);
   float angleY = mpu.getAngle('Y', KALMAN);
   float angleZ = mpu.getAngle('Z');
@@ -220,6 +220,7 @@ void loop() {
 
   delay(100);
 }
+
 ```
 
 ## Diferenças Entre as Escalas do Giroscópio
