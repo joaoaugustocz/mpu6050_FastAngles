@@ -26,6 +26,7 @@ setKalmanQbias          KEYWORD2
 setKalmanRmeasure       KEYWORD2
 printSettings           KEYWORD2
 configureGyroScale      KEYWORD2
+manualCalibration        KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

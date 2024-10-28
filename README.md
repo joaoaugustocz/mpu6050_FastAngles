@@ -33,6 +33,14 @@ Saves the calibration offsets to EEPROM.
 `bool loadCalibration();`
 Loads the calibration offsets from EEPROM.
 
+`void manualCalibration(int x, int y, int z);`  
+  Sets the gyroscope calibration offsets manually for the X, Y, and Z axes. This can be useful if you already know the offsets and want to avoid recalibrating each time.
+
+  **Parameters:**
+    - `x`: Offset for the X-axis
+    - `y`: Offset for the Y-axis
+    - `z`: Offset for the Z-axis
+
 `void resetSensor();`
 Resets the MPU6050 sensor.
 
@@ -148,6 +156,15 @@ Salva os offsets de calibração na EEPROM.
 
 `bool loadCalibration();`
 Carrega os offsets de calibração da EEPROM.
+
+`void manualCalibration(int x, int y, int z);`  
+Define manualmente os offsets de calibração do giroscópio para os eixos X, Y e Z. Isso pode ser útil se você já conhece os offsets e deseja evitar recalibrar a cada vez.
+
+**Parâmetros:**
+
+-`x`: Offset para o eixo X
+-`y`: Offset para o eixo Y
+-`z`: Offset para o eixo Z
 
 `void resetSensor();`
 Reinicia o sensor MPU6050.

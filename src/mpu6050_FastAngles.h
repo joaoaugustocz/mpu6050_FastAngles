@@ -35,6 +35,7 @@ class mpu6050_FastAngles {
     void setKalmanQbias(float Q_bias);
     void setKalmanRmeasure(float R_measure);
     void printSettings();
+    void manualCalibration(int x, int y, int z);
   private:
     // Variáveis de armazenamento dos dados do sensor
     int16_t accX, accY, accZ;

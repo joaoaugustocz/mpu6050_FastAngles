@@ -167,6 +167,17 @@ bool mpu6050_FastAngles::loadCalibration() {
   return true;
 }
 
+void mpu6050_FastAngles::manualCalibration(int x, int y, int z) {
+    gyroXOffset = x;
+    gyroYOffset = y;
+    gyroZOffset = z;
+
+    Serial.println("Calibração manual definida.");
+    Serial.print("gyroXOffset: "); Serial.println(gyroXOffset);
+    Serial.print("gyroYOffset: "); Serial.println(gyroYOffset);
+    Serial.print("gyroZOffset: "); Serial.println(gyroZOffset);
+}
+
 void mpu6050_FastAngles::resetSensor() {
   // Reinicializar o MPU6050
   Wire.beginTransmission(MPU6050_ADDR);
