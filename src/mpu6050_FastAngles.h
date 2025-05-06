@@ -23,7 +23,7 @@ class mpu6050_FastAngles {
   public:
     mpu6050_FastAngles();
     void begin(GyroScale scale = MPU_MODE_250);
-    void calibrateGyro(int calibrations = 1000);
+    void calibrateGyro(int calibrations = 1000, int delayTime = 2000);
     void saveCalibration();
     bool loadCalibration();
     void resetSensor();
@@ -31,15 +31,16 @@ class mpu6050_FastAngles {
     void invert(char axis);
     float getAngle(char axis, FilterType filter = COMPLEMENTARY);
     void setComplementaryFactor(float factor);
-    void setKalmanQangle(float Q_angle);
-    void setKalmanQbias(float Q_bias);
-    void setKalmanRmeasure(float R_measure);
+    void setKalmanQangle(double Q_angle);
+    void setKalmanQbias(double Q_bias);
+    void setKalmanRmeasure(double R_measure);
     void printSettings();
     void manualCalibration(int x, int y, int z);
+    void resetKalmanFilter();
   private:
     // Variáveis de armazenamento dos dados do sensor
-    int16_t accX, accY, accZ;
-    int16_t gyroX, gyroY, gyroZ;
+    long long accX, accY, accZ;
+    long long gyroX, gyroY, gyroZ;
     float gyroXOffset, gyroYOffset, gyroZOffset;
     float angleX, angleY, angleZ;
     float gyroRateX, gyroRateY, gyroRateZ;
@@ -52,13 +53,13 @@ class mpu6050_FastAngles {
     int gyroScale;
 
     // Variáveis do filtro de Kalman
-    float Q_angle;
-    float Q_bias;
-    float R_measure;
-    float angleKF_X, biasKF_X;
-    float P_KF_X[2][2];
-    float angleKF_Y, biasKF_Y;
-    float P_KF_Y[2][2];
+    double Q_angle;
+    double Q_bias;
+    double R_measure;
+    double angleKF_X, biasKF_X;
+    double P_KF_X[2][2];
+    double angleKF_Y, biasKF_Y;
+    double P_KF_Y[2][2];
 
     // Métodos privados
     void configureGyroScale(GyroScale scale = MPU_MODE_250);
