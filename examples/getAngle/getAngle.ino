@@ -18,6 +18,8 @@ void setup() {
 
   //Opicional, exibir as configurações atuais
   mpu.printSettings();
+
+  mpu.calibrateGyro(1000, 2000); // Calibrações e Delay de Inicialização
 }
 
 void loop() {
