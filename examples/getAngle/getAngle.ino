@@ -24,7 +24,7 @@ void loop() {
   // Obter os ângulos, o filtro padrão é o complementar
   float angleX = mpu.getAngle('X', KALMAN);
   float angleY = mpu.getAngle('Y', KALMAN);
-  float angleZ = mpu.getAngle('Z');
+  float angleZ = mpu.getAngle('Z'); // Não tem filtro de Kalman para o eixo Z
 
   Serial.print("Angle X: "); Serial.print(angleX);
   Serial.print("\tAngle Y: "); Serial.print(angleY);
