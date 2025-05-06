@@ -49,15 +49,15 @@ void mpu6050_FastAngles::setComplementaryFactor(float factor) {
   }
 }
 
-void mpu6050_FastAngles::setKalmanQangle(float Q_angle) {
+void mpu6050_FastAngles::setKalmanQangle(double Q_angle) {
   this->Q_angle = Q_angle;
 }
 
-void mpu6050_FastAngles::setKalmanQbias(float Q_bias) {
+void mpu6050_FastAngles::setKalmanQbias(double Q_bias) {
   this->Q_bias = Q_bias;
 }
 
-void mpu6050_FastAngles::setKalmanRmeasure(float R_measure) {
+void mpu6050_FastAngles::setKalmanRmeasure(double R_measure) {
   this->R_measure = R_measure;
 }
 
@@ -103,7 +103,6 @@ void mpu6050_FastAngles::configureGyroScale(GyroScale scale) {
     Serial.println("°/s");
 }
 
-
 void mpu6050_FastAngles::printSettings() {
   Serial.println("Configurações atuais do MPU6050:");
   Serial.print("Giroscópio configurado com escala: ±");
@@ -114,9 +113,9 @@ void mpu6050_FastAngles::printSettings() {
   Serial.println(accAngleCorrectionFactor);
 
   Serial.println("Parâmetros do Filtro de Kalman:");
-  Serial.print("Q_angle: "); Serial.println(Q_angle);
-  Serial.print("Q_bias: "); Serial.println(Q_bias);
-  Serial.print("R_measure: "); Serial.println(R_measure);
+  Serial.print("Q_angle: "); Serial.println(Q_angle, 6);
+  Serial.print("Q_bias: "); Serial.println(Q_bias, 6);
+  Serial.print("R_measure: "); Serial.println(R_measure, 6);
 
   Serial.println("Offsets de Calibração:");
   Serial.print("gyroXOffset: "); Serial.println(gyroXOffset);
@@ -124,9 +123,9 @@ void mpu6050_FastAngles::printSettings() {
   Serial.print("gyroZOffset: "); Serial.println(gyroZOffset);
 }
 
-void mpu6050_FastAngles::calibrateGyro(int calibrations) {
+void mpu6050_FastAngles::calibrateGyro(int calibrations, int delayTime) {
   Serial.println("Calibrando sensor, não mova o MPU6050...");
-  delay(2000); // Aguarda 2 segundos antes de iniciar a calibração
+  delay(delayTime); // Aguarda 2 segundos antes de iniciar a calibração
 
   long gyroXTotal = 0, gyroYTotal = 0, gyroZTotal = 0;
 
@@ -230,7 +229,7 @@ void mpu6050_FastAngles::readSensorData() {
 float mpu6050_FastAngles::complementaryFilter(char axis) {
   // Atualizar o tempo
   currentTime = micros();
-  elapsedTime = (currentTime - previousTime) / 1000000.0;
+  elapsedTime = (currentTime - previousTime) / 1000000.0f;
   previousTime = currentTime;
 
   readSensorData();
@@ -245,14 +244,17 @@ float mpu6050_FastAngles::complementaryFilter(char axis) {
   gyroZ -= gyroZOffset;
 
   // Calcular velocidade angular
+  //Serial.println("GyroScaleFactor: " + String(gyroScaleFactor));
   gyroRateX = gyroX / gyroScaleFactor;
   gyroRateY = gyroY / gyroScaleFactor;
   gyroRateZ = gyroZ / gyroScaleFactor;
 
   // Integrar dados do giroscópio para obter o ângulo
+
   angleX += gyroRateX * elapsedTime;
   angleY += gyroRateY * elapsedTime;
   angleZ += gyroRateZ * elapsedTime;
+
 
   // Aplicar filtro complementar
   angleX = accAngleCorrectionFactor * angleX + (1.0 - accAngleCorrectionFactor) * accAngleX;
@@ -269,7 +271,7 @@ float mpu6050_FastAngles::complementaryFilter(char axis) {
 float mpu6050_FastAngles::kalmanFilter(char axis) {
   // Atualizar o tempo
   currentTime = micros();
-  elapsedTime = (currentTime - previousTime) / 1000000.0;
+  elapsedTime = (currentTime - previousTime) / 1000000.0f;
   previousTime = currentTime;
 
   readSensorData();
@@ -293,8 +295,8 @@ float mpu6050_FastAngles::kalmanFilter(char axis) {
     // Predição
     angleKF_X += elapsedTime * (gyroRateX - biasKF_X);
     P_KF_X[0][0] += elapsedTime * (elapsedTime * P_KF_X[1][1] - P_KF_X[0][1] - P_KF_X[1][0] + Q_angle);
-    P_KF_X[0][1] -= elapsedTime * P_KF_X[1][1];
-    P_KF_X[1][0] -= elapsedTime * P_KF_X[1][1];
+    P_KF_X[0][1] -= elapsedTime * P_KF_X[0][1];
+    P_KF_X[1][0] -= elapsedTime * P_KF_X[1][0];
     P_KF_X[1][1] += Q_bias * elapsedTime;
 
     // Atualização
@@ -319,8 +321,8 @@ float mpu6050_FastAngles::kalmanFilter(char axis) {
     // Predição
     angleKF_Y += elapsedTime * (gyroRateY - biasKF_Y);
     P_KF_Y[0][0] += elapsedTime * (elapsedTime * P_KF_Y[1][1] - P_KF_Y[0][1] - P_KF_Y[1][0] + Q_angle);
-    P_KF_Y[0][1] -= elapsedTime * P_KF_Y[1][1];
-    P_KF_Y[1][0] -= elapsedTime * P_KF_Y[1][1];
+    P_KF_Y[0][1] -= elapsedTime * P_KF_Y[0][1];
+    P_KF_Y[1][0] -= elapsedTime * P_KF_Y[1][0];
     P_KF_Y[1][1] += Q_bias * elapsedTime;
 
     // Atualização
@@ -347,8 +349,10 @@ float mpu6050_FastAngles::kalmanFilter(char axis) {
 
 float mpu6050_FastAngles::getAngle(char axis, FilterType filter) {
   if (filter == COMPLEMENTARY) {
+    Serial.println("Filtro Complementar");
     return complementaryFilter(axis);
   } else if (filter == KALMAN) {
+    Serial.println("Filtro de Kalman");
     return kalmanFilter(axis);
   }
   return 0;
